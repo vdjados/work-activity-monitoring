@@ -1,52 +1,63 @@
-### Visual Studio ###
-## Временные файлы сборки
-[Dd]ebug/
-[Rd]elease/
-[Rr]eleases/
-x64/
-x86/
-[Bb]in/
-[Oo]bj/
-*.sdf
-*.opensdf
-*.suo
+# Visual Studio
+.vs/
 *.user
-*.VC.db
-*.VC.opendb
-*.pch
-*.ipch
+*.suo
+*.userosscache
+*.sln.docstates
 
-## Бинарные и промежуточные файлы
-*.exe
-*.dll
-*.lib
-*.pdb
-*.ilk
-*.exp
-*.idb
-*.tlog
+# Build artifacts
+**/bin/
+**/obj/
+**/x64/Debug/
+**/x64/Release/
+**/Debug/
+**/Release/
+
+# C++ specific
+*.vcxproj.user
+*.opensdf
+*.sdf
+*.cache
+ipch/
 *.log
 
-## Папка конфигураций VS
-.vs/
-
-### Python/Django ###
-## Виртуальное окружение
-venv/
-.env/
-
-## Кэш интерпретатора
-__pycache__/
-*.py[cod]
-
-## Базы данных
-*.sqlite3
+# ASP.NET Core / .NET
+*.dll
+*.exe
+*.pdb
+*.dll.config
+*.deps.json
+*.runtimeconfig.json
 *.db
+appsettings.*.json   # пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+secrets.json         # пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ User Secrets
 
-## Статика и медиа (если используются)
-server/static/
-server/media/
+# Rider
+.idea/
 
-### Системные файлы ###
-.DS_Store
-Thumbs.db
+# Node (пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅ)
+node_modules/
+
+# NuGet
+*.nupkg
+packages/
+.nuget/
+
+# VS Code
+.vscode/
+
+# пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+*.log
+*.tmp
+*.temp
+
+# пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ Server/Screenshots)
+Server/Screenshots/
+
+# Python (пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
+*.pyc
+__pycache__/
+db.sqlite3
+.env
+.venv/
+media/

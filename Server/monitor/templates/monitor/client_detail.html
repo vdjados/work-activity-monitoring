@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Скриншот клиентА покаа {{ client }}</h1>
+<p><strong>Последняя активность:</strong> {{ client.last_active }}</p>
+{% if client.screenshot %}
+  <img src="{{ client.screenshot.url }}" alt="Screenshot" style="max-width:100%;"/>
+{% else %}
+  <p>Скриншот не доступен.</p>
+{% endif %}
+<p><a href="{% url 'client-list' %}">← Назад к списку</a></p>
+{% endblock %}
