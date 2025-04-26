@@ -21,17 +21,6 @@
 ipch/
 *.log
 
-# ASP.NET Core / .NET
-*.dll
-*.exe
-*.pdb
-*.dll.config
-*.deps.json
-*.runtimeconfig.json
-*.db
-appsettings.*.json   # ���� � ��� ���� ������ ���������
-secrets.json         # ���� ����������� User Secrets
-
 # Rider
 .idea/
 
@@ -54,10 +43,41 @@ packages/
 # ��������� (��� ����������� � ����� Server/Screenshots)
 Server/Screenshots/
 
-# Python (���� ������������ � ��������)
-*.pyc
+# Python
 __pycache__/
-db.sqlite3
+*.py[cod]
+*.sqlite3
 .env
 .venv/
-media/
+*.log
+
+# Django
+/media/
+db.sqlite3
+
+# VS / C++
+*.obj
+*.pdb
+*.idb
+*.suo
+*.user
+*.aps
+*.ncb
+*.ipch
+*.tlog
+*.vcxproj.user
+*.exe
+*.dll
+*.log
+*.bak
+*.cache
+*.ilk
+*.tmp
+.vs/
+Debug/
+Release/
+
+# System
+.DS_Store
+Thumbs.db
+desktop.ini
