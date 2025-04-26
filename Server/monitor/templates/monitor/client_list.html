@@ -1,19 +1,41 @@
 {% extends 'base.html' %}
+
 {% block content %}
-<h1>Список клиентов</h1>
-<table border="1" cellpadding="4">
-  <tr>
-    <th>Домен</th><th>Компьютер</th><th>Пользователь</th><th>IP</th><th>Последняя активность</th><th>Скриншот</th>
-  </tr>
-  {% for client in clients %}
-  <tr>
-    <td>{{ client.domain }}</td>
-    <td>{{ client.computer_name }}</td>
-    <td>{{ client.username }}</td>
-    <td>{{ client.ip_address }}</td>
-    <td>{{ client.last_active }}</td>
-    <td><a href="{% url 'client-detail' client.pk %}">Просмотр</a></td>
-  </tr>
-  {% endfor %}
+<h2>Клиенты</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Домен</th>
+            <th>Компьютер</th>
+            <th>Пользователь</th>
+            <th>IP адрес</th>
+            <th>Последняя активность</th>
+            <th>Скриншот</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for client in clients %}
+        <tr>
+            <td>{{ client.domain }}</td>
+            <td>{{ client.computer_name }}</td>
+            <td>{{ client.username }}</td>
+            <td>{{ client.ip_address }}</td>
+            <td>{{ client.last_active|date:"Y-m-d H:i:s" }}</td>
+            <td>
+                {% if client.screenshot %}
+                    <a class="btn" href="{% url 'client-detail' client.pk %}">
+                     Просмотр
+                    </a>
+                {% else %}
+                    Нет данных
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6" style="text-align:center;">Нет активных клиентов</td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
 {% endblock %}

@@ -1,4 +1,3 @@
-# файл: tcp_server.py (рядом с manage.py)
 import os
 import django
 import socket
@@ -6,7 +5,6 @@ import struct
 import json
 import time
 
-# --- Настройка Django ORM ---
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'server.settings')
 django.setup()
 
@@ -19,13 +17,13 @@ PORT = 5000
 
 def handle_client(conn, addr):
     try:
-        # --- Чтение длины JSON-заголовка (4 байта, little-endian) ---
+        # Чтение длины JSON-заголовка
         raw = conn.recv(4)
         if not raw:
             return
         hdr_len = struct.unpack('<i', raw)[0]
 
-        # --- Чтение самого JSON ---
+        # Чтение JSON
         data = b''
         while len(data) < hdr_len:
             chunk = conn.recv(hdr_len - len(data))
@@ -34,18 +32,18 @@ def handle_client(conn, addr):
             data += chunk
         header = json.loads(data.decode('utf-8'))
 
-        # --- Чтение длины скриншота ---
+        # Чтение длины скриншота
         raw = conn.recv(4)
         scr_len = struct.unpack('<i', raw)[0]
 
-        # --- Чтение скриншота ---
+        # Чтение скриншота 
         scr_data = b''
         while len(scr_data) < scr_len:
             chunk = conn.recv(scr_len - len(scr_data))
             if not chunk:
                 break
             scr_data += chunk
-        # --- Сохранение в БД ---
+        # Сохранение в БД
         domain   = header.get('domain', '')
         computer = header.get('machine', '')
         username = header.get('user', '')
@@ -60,7 +58,6 @@ def handle_client(conn, addr):
         )
 
         if scr_data:
-            # сохраняем raw-данные как .bmp (если это битмап) или .png
             ts = int(time.time())
             fname = f"{domain}_{username}_{ts}.bmp"
             client_obj.screenshot.save(fname, ContentFile(scr_data))
