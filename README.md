@@ -14,7 +14,7 @@ start cmd /k "python tcp_server.py"
 ```
 ## Клиент
 
-Открыть Client/Client.sln в Visual Studio.
+Открыть решение в Visual Studio.
 
 Построить и запустить (F5).
 
