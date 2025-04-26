@@ -41,7 +41,7 @@ packages/
 *.temp
 
 # ��������� (��� ����������� � ����� Server/Screenshots)
-Server/Screenshots/
+Server/media
 
 # Python
 __pycache__/
