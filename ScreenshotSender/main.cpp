@@ -1,10 +1,8 @@
-#define _WIN32_WINNT 0x0600
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <windows.h>
 #include <tchar.h>
 #include <shlwapi.h>
-#include <wtsapi32.h>
 #include <iostream>
 #include "Config.h"
 #include "ActivityMonitor.h"
@@ -13,7 +11,6 @@
 
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "shlwapi.lib")
-#pragma comment(lib, "Wtsapi32.lib")
 
 TCHAR serviceName[] = _T("MyClientService");
 
@@ -36,104 +33,20 @@ void WINAPI ServiceCtrlHandler(DWORD controlCode) {
     }
 }
 
-bool LaunchUserProcess(const std::wstring& exePath) {
-    DWORD sessionId = WTSGetActiveConsoleSessionId();
-    if (sessionId == 0xFFFFFFFF) {
-        OutputDebugStringA("[Service] No active session\n");
-        return false;
-    }
-
-    HANDLE userToken = nullptr;
-    if (!WTSQueryUserToken(sessionId, &userToken)) {
-        DWORD err = GetLastError();
-        char buf[256];
-        sprintf_s(buf, "[Service] WTSQueryUserToken failed: %u\n", err);
-        OutputDebugStringA(buf);
-        return false;
-    }
-
-    STARTUPINFOW si = { sizeof(si) };
-    si.lpDesktop = const_cast<LPWSTR>(L"winsta0\\default");
-    PROCESS_INFORMATION pi = {};
-
-    BOOL created = CreateProcessAsUserW(
-        userToken,
-        exePath.c_str(),
-        nullptr,
-        nullptr,
-        nullptr,
-        FALSE,
-        CREATE_NO_WINDOW,
-        nullptr,
-        nullptr,
-        &si,
-        &pi
-    );
-    CloseHandle(userToken);
-
-    if (!created) {
-        DWORD err = GetLastError();
-
-        LPWSTR msgBuf = nullptr;
-        FormatMessageW(
-            FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-            nullptr,
-            err,
-            MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-            (LPWSTR)&msgBuf,
-            0,
-            nullptr
-        );
-
-        // Выводим код и текст
-        char buf[1024];
-        int len = WideCharToMultiByte(CP_UTF8, 0, msgBuf, -1, buf, sizeof(buf), nullptr, nullptr);
-        sprintf_s(buf + len, sizeof(buf) - len,
-            "[Service] CreateProcessAsUser failed: %u (%ls)\n", err, msgBuf);
-        OutputDebugStringA(buf);
-
-        LocalFree(msgBuf);
-        return false;
-    }
-
-    CloseHandle(pi.hProcess);
-    CloseHandle(pi.hThread);
-    return true;
-}
-
 void ServiceMainLogic() {
     while (g_Running) {
-        OutputDebugStringA("[Service] Beginning heartbeat cycle\n");
-
-        // Собираем путь к helper-у
-        wchar_t pathBuf[MAX_PATH];
-        GetModuleFileNameW(NULL, pathBuf, MAX_PATH);
-        PathRemoveFileSpecW(pathBuf);
-        PathAppendW(pathBuf, L"ScreenshotSender.exe");
-
-        // Логируем путь
-        {
-            char bufUtf8[MAX_PATH];
-            WideCharToMultiByte(CP_UTF8, 0, pathBuf, -1, bufUtf8, sizeof(bufUtf8), NULL, NULL);
-            OutputDebugStringA("[Service] Helper path: ");
-            OutputDebugStringA(bufUtf8);
-            OutputDebugStringA("\n");
+        auto info = ActivityMonitor::GetInfo();
+        auto shot = Screenshot::Capture();
+        if (!Network::Send(info, shot)) {
+            OutputDebugStringA("[Service] Failed to send data to server\n");
         }
-
-        // Пытаемся запустить
-        OutputDebugStringA("[Service] LaunchUserProcess START\n");
-        bool ok = LaunchUserProcess(pathBuf);
-        OutputDebugStringA(ok
-            ? "[Service] LaunchUserProcess SUCCEEDED\n"
-            : "[Service] LaunchUserProcess FAILED\n");
-
-        OutputDebugStringA("[Service] Sleeping until next heartbeat\n");
+        else {
+            OutputDebugStringA("[Service] Data sent successfully\n");
+        }
         Sleep(HEARTBEAT_SEC * 1000);
     }
-
     serviceStatus.dwCurrentState = SERVICE_STOPPED;
     SetServiceStatus(serviceStatusHandle, &serviceStatus);
-    OutputDebugStringA("[Service] Exiting ServiceMainLogic, service stopped\n");
 }
 
 void WINAPI ServiceMain(DWORD argc, LPTSTR* argv) {
