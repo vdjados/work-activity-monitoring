@@ -14,8 +14,12 @@ start cmd /k "python tcp_server.py"
 ```
 ## Клиент
 
-Открыть решение в Visual Studio.
+**Install:**  
+   `MyClientService.exe install`
 
-Построить и запустить (F5).
-
-Клиент → 127.0.0.1:5000 → TCP сервер → Django DB → веб-UI
+**Start/Stop:**  
+   `net start MyClientService`  
+   `net stop  MyClientService`
+   
+**Uninstall:**  
+   `MyClientService.exe uninstall`
